@@ -1,0 +1,70 @@
+import java.util.*;
+
+public class Solution {
+
+    static final int MOD = 998244353;
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        int N = Integer.parseInt(scan.nextLine().trim());
+        int M = Integer.parseInt(scan.nextLine().trim());
+        int K = Integer.parseInt(scan.nextLine().trim());
+
+        List<Integer> dx = new ArrayList<>(K);
+        for (int j = 0; j < K; j++) {
+            dx.add(Integer.parseInt(scan.nextLine().trim()));
+        }
+
+        List<Integer> dy = new ArrayList<>(K);
+        for (int j = 0; j < K; j++) {
+            dy.add(Integer.parseInt(scan.nextLine().trim()));
+        }
+
+        Set<String> forbidden = new HashSet<>();
+        for (int j = 0; j < M; j++) {
+            int x = Integer.parseInt(scan.nextLine().trim());
+            int y = Integer.parseInt(scan.nextLine().trim());
+            forbidden.add(x + "," + y);
+        }
+
+        long result = calc(N, K, dx, dy, forbidden);
+        System.out.println(result);
+
+        scan.close();
+    }
+
+    private static long calc(int N, int K, List<Integer> dx, List<Integer> dy, Set<String> forbidden) {
+        Map<String, Long> curr = new HashMap<>();
+        curr.put("0,0", 1L);
+
+        for (int step = 0; step < N; step++) {
+            Map<String, Long> next = new HashMap<>();
+
+            for (Map.Entry<String, Long> entry : curr.entrySet()) {
+                String[] parts = entry.getKey().split(",");
+                int x = Integer.parseInt(parts[0]);
+                int y = Integer.parseInt(parts[1]);
+                long ways = entry.getValue();
+
+                for (int i = 0; i < K; i++) {
+                    int nx = x + dx.get(i);
+                    int ny = y + dy.get(i);
+                    String key = nx + "," + ny;
+
+                    if (!forbidden.contains(key)) {
+                        next.put(key, (next.getOrDefault(key, 0L) + ways) % MOD);
+                    }
+                }
+            }
+            curr = next;
+        }
+
+        long total = 0;
+        for (long val : curr.values()) {
+            total = (total + val) % MOD;
+        }
+
+        return total;
+    }
+}
