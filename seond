@@ -1,0 +1,43 @@
+import java.util.*;
+
+public class Solution {
+    static final int MOD = 1000000007;
+    static final int MAX = 1000000;
+    static int[] divCount = new int[MAX + 1];
+
+    static void precomputeDivisors() {
+        for (int i = 1; i <= MAX; i++) {
+            for (int j = i; j <= MAX; j += i) {
+                divCount[j]++;
+            }
+        }
+    }
+
+    static int gcd(int a, int b) {
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        precomputeDivisors();
+        int n = sc.nextInt();
+        int[] A = new int[n];
+        for (int i = 0; i < n; i++) {
+            A[i] = sc.nextInt();
+        }
+        long total = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                int g = gcd(A[i], A[j]);
+                int beauty = divCount[A[i]] + divCount[A[j]] - 2 * divCount[g];
+                total = (total + beauty) % MOD;
+            }
+        }
+        System.out.println(total);
+    }
+}
