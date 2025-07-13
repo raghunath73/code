@@ -30,13 +30,11 @@ public class Solution {
 
         long result = calc(N, K, dx, dy, forbidden);
         System.out.println(result);
-
-        scan.close();
     }
 
     private static long calc(int N, int K, List<Integer> dx, List<Integer> dy, Set<String> forbidden) {
         Map<String, Long> curr = new HashMap<>();
-        curr.put("0,0", 1L);
+        curr.put("0,0", 1L); // Starting position
 
         for (int step = 0; step < N; step++) {
             Map<String, Long> next = new HashMap<>();
@@ -57,6 +55,7 @@ public class Solution {
                     }
                 }
             }
+
             curr = next;
         }
 
