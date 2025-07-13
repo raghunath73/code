@@ -1,43 +1,61 @@
-import java.util.*;
+public static int get_ans(int N, List<Integer> A) {
 
-public class Solution {
-    static final int MOD = 1000000007;
-    static final int MAX = 1000000;
-    static int[] divCount = new int[MAX + 1];
+    int MAX = 1_000_001;
+    int MOD = 1_000_000_007;
 
-    static void precomputeDivisors() {
-        for (int i = 1; i <= MAX; i++) {
-            for (int j = i; j <= MAX; j += i) {
-                divCount[j]++;
-            }
+    int[] freq = new int[MAX];
+    for (int a : A) {
+        freq[a]++;
+    }
+
+    int[] divisorCount = new int[MAX];
+    for (int i = 1; i < MAX; i++) {
+        for (int j = i; j < MAX; j += i) {
+            divisorCount[j]++;
         }
     }
 
-    static int gcd(int a, int b) {
-        while (b != 0) {
-            int temp = b;
-            b = a % b;
-            a = temp;
-        }
-        return a;
+    long totalBeauty = 0;
+    for (int i = 1; i < MAX; i++) {
+        if (freq[i] == 0) continue;
+        long cnt = freq[i];
+        long pairWithOthers = cnt * (N - cnt);
+        totalBeauty = (totalBeauty + pairWithOthers % MOD * divisorCount[i] % MOD) % MOD;
     }
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        precomputeDivisors();
-        int n = sc.nextInt();
-        int[] A = new int[n];
-        for (int i = 0; i < n; i++) {
-            A[i] = sc.nextInt();
+    long[] multipleCount = new long[MAX];
+    for (int i = 1; i < MAX; i++) {
+        for (int j = i; j < MAX; j += i) {
+            multipleCount[i] += freq[j];
         }
-        long total = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
-                int g = gcd(A[i], A[j]);
-                int beauty = divCount[A[i]] + divCount[A[j]] - 2 * divCount[g];
-                total = (total + beauty) % MOD;
-            }
-        }
-        System.out.println(total);
     }
+
+    for (int g = 1; g < MAX; g++) {
+        long cnt = multipleCount[g];
+        if (cnt >= 2) {
+            long pairCount = cnt * (cnt - 1) / 2;
+            totalBeauty = (totalBeauty - 2 * pairCount % MOD + MOD) % MOD;
+        }
+    }
+
+    return (int) totalBeauty;
+}
+
+public static void main(String[] args) {
+
+    Scanner scan = new Scanner(System.in);
+
+    int N = Integer.parseInt(scan.nextLine().trim());
+
+    List<Integer> A = new ArrayList<>(N);
+
+    for (int j = 0; j < N; j++) {
+        A.add(Integer.parseInt(scan.nextLine().trim()));
+    }
+
+    int result = get_ans(N, A);
+
+    System.out.println(result);
+
+    scan.close();
 }
